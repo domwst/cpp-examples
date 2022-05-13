@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <array>
+#include <sstream>
 
 using namespace std;
 
@@ -36,9 +37,11 @@ void PtrExample() {
 void StaticArrayExample() {
   int a[5] = {1, 2, 3, 4, 5};
   int *ptr = a;
+  print(*(a + 2));
   print(*ptr);
   print(*(ptr + 2));
   print(ptr[2]);
+  // ptr[2] == *(ptr + 2) == *(2 + ptr) == 2[ptr]
 }
 
 void PtrFun() {
@@ -53,6 +56,7 @@ void DynamicArrayExample() {
   for (int i = 0; i < n; ++i) {
     arr[i] = i * i;
   }
+  // [arr, arr + n)
   print(n);
   int sum = accumulate(arr, arr + n, 0);
   print(sum);
@@ -103,6 +107,7 @@ void VectorExamples() {
   cout << endl;
 
   vector<int> elems = {9, 10, 11};
+  // [v.begin(), v.end())
   v.insert(v.end() - 1, elems.begin(), elems.end());
   cout << "insert(v.end() - 1, elems.begin(), elems.end())" << endl;
   print(v);
@@ -124,7 +129,7 @@ void Vector2dExample() {
 }
 
 void ReserveAdvantage() {
-  constexpr int size = (1 << 24);
+  constexpr int size = (1 << 24) + 1;
   size_t without_reserve, with_reserve;
   {
     vector<int> v;
@@ -191,6 +196,14 @@ void Lambdas() {
   a = 2;
   cout << "print_old_a()" << endl;
   print_old_a();
+
+  auto naturals = [a = 0]() mutable {
+    cout << a++ << endl;
+  };
+  cout << endl;
+  naturals();
+  naturals();
+  print(a);
 }
 
 void RangeBasedFor() {
@@ -308,13 +321,13 @@ void Algorithm() {
   sort(u.begin(), u.end());
 
   print(u);
-  vector<int> merged(u.size() + v.size());
-  merge(v.begin(), v.end(), u.begin(), u.end(), merged.begin());
-  print(merged);
-
-//  vector<int> merged;
-//  merge(v.begin(), v.end(), u.begin(), u.end(), back_inserter(merged));
+//  vector<int> merged(u.size() + v.size());
+//  merge(v.begin(), v.end(), u.begin(), u.end(), merged.begin());
 //  print(merged);
+
+  vector<int> merged;
+  merge(v.begin(), v.end(), u.begin(), u.end(), back_inserter(merged));
+  print(merged);
   cout << endl;
 
   rotate(v.begin(), v.begin() + 2, v.end());
@@ -353,7 +366,7 @@ void CustomSetComparator() {
   auto cmp = [](int a, int b) {
     return a > b;
   };
-  set<int, decltype(cmp)> s({1, 2, 3}, cmp);
+  set<int, greater<int>> s({1, 2, 3});
   print(s);
   print(*s.lower_bound(5));
 }
@@ -365,7 +378,7 @@ void MapExamples() {
   print(m);
 }
 
-int WrongGetOrZero(const map<int, int>& m, int key) {
+int WrongGetOrZero(map<int, int>& m, int key) {
   return m[key];
 }
 
@@ -383,6 +396,69 @@ int FastGetOrZero(const map<int, int>& m, int key) {
   return 0;
 }
 
+void StringStreamExamples() {
+//  int a, b;
+//  cin >> a >> b;
+
+//  int val, sm = 0;
+//  while (cin >> val) {
+//    sm += val;
+//  }
+
+  stringstream ss;
+  string text, text2, text3;
+  getline(getline(cin, text) >> text2, text3);
+  while (getline(cin, text)) {
+  }
+  ss << text;
+  int v;
+  while (ss >> v) {
+    cout << v << endl;
+  }
+}
+
+void RecurrentLambdas() {
+  {
+    int counter = 0;
+    function<void(int)> f = [&counter, &f](int depth) {
+      ++counter;
+      if (depth != 0) {
+        f(depth - 1);
+        f(depth - 1);
+      }
+    };
+    StopWatch cpu;
+    f(24);
+    cout << cpu.ElapsedMillis() << " ms, ";
+  }
+  {
+    int counter = 0;
+    auto f = [&counter](auto f, int depth) -> void {
+      ++counter;
+      if (depth != 0) {
+        f(f, depth - 1);
+        f(f, depth - 1);
+      }
+    };
+    StopWatch cpu;
+    f(f, 24);
+    cout << cpu.ElapsedMillis() << " ms, ";
+  }
+  {
+    int counter = 0;
+    auto f = [&counter](auto& f, int depth) -> void {
+      ++counter;
+      if (depth != 0) {
+        f(f, depth - 1);
+        f(f, depth - 1);
+      }
+    };
+    StopWatch cpu;
+    f(f, 24);
+    cout << cpu.ElapsedMillis() << " ms" << endl;
+  }
+}
+
 int main() {
 //  PtrExample();
 //  StaticArrayExample();
@@ -397,4 +473,6 @@ int main() {
 //  SetExamples();
 //  CustomSetComparator();
 //  MapExamples();
+//  StringStreamExamples();
+//  RunStress(RecurrentLambdas);
 }
