@@ -366,7 +366,8 @@ void CustomSetComparator() {
   auto cmp = [](int a, int b) {
     return a > b;
   };
-  set<int, greater<int>> s({1, 2, 3});
+//  set<int, greater<int>> s({1, 2, 3});
+  set<int, decltype(cmp)> s({1, 2, 3}, cmp);
   print(s);
   print(*s.lower_bound(5));
 }
