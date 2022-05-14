@@ -10,14 +10,18 @@
 using namespace std;
 
 void UniquePtrExample() {
-  unique_ptr<C> ptr(new C);
+  unique_ptr<C> ptr1(new C);
 //  auto ptr2 = ptr;  // CE
-  new C;
-};
+//  new C;
+}
 
 void MakeUniqueExample() {
   auto ptr = make_unique<C>();
+//  auto vptr = make_unique<vector<int>>(5, 1);
   print(ptr.get());
+//  ptr.release();
+//  vptr->push_back(2);
+//  print(*vptr);
 }
 
 void UniquePtrMoveExample() {
@@ -47,7 +51,8 @@ void MoveExample1() {
 
 void MoveExample2() {
   auto MakeC = []() {
-    return C();  // move?
+    C a;
+    return a;  // move?
   };
   auto a = MakeC();
 }
@@ -67,13 +72,13 @@ void MoveExample3() {
 
 void ExceptionsExample() {
   class DivisionByZeroException : public exception {
-//   public:
-//    [[nodiscard]] const char* what() const noexcept override {
-//      return "Division by zero";
-//    }
+   public:
+    [[nodiscard]] const char* what() const noexcept override {
+      return "Division by zero";
+    }
   };
 
-  auto Divide = [](int a, int b) -> int{
+  auto Divide = [](int a, int b) -> int {
     if (b == 0) {
       C tmp;
       throw DivisionByZeroException();
@@ -86,6 +91,8 @@ void ExceptionsExample() {
     print(Divide(a, b));
   } catch (exception& e) {
     cout << "Exception caught: " << e.what() << endl;
+  } catch (int& a) {
+    cout << "Int caught " << a << endl;
   }
 }
 
@@ -118,7 +125,7 @@ void ConstMethodExample() {
 
   cout << "Output for b:" << endl;
   const C b;
-  b.OnlyConst();;
+  b.OnlyConst();
 //  b.OnlyNonConst();
   b.Both();
 }
@@ -136,7 +143,7 @@ void ConstructorDestructorExample() {
     Vector(const Vector& other) : Vector(*other.x_, *other.y_) {
     }
 
-    Vector(Vector&& other) {  // MISTAKE HERE
+    Vector(Vector&& other) : Vector() {  // MISTAKE HERE
       swap(x_, other.x_);
       swap(y_, other.y_);
     }
@@ -171,6 +178,12 @@ void ConstructorDestructorExample() {
       return Vector(-*x_, -*y_);
     }
 
+//    Vector& operator++() {
+//    }  // ++v;
+//
+//    Vector operator++(int) {
+//    }  // v++;
+
     Vector operator+(const Vector& other) const {
       return Vector(*x_ + *other.x_, *y_ + *other.y_);
     }
@@ -189,8 +202,8 @@ void ConstructorDestructorExample() {
     }
 
    private:
-    int* x_;
-    int* y_;
+    int* x_ = nullptr;
+    int* y_ = nullptr;
   };
 
   Vector v1(1, 2), v2(2, 3);
@@ -218,7 +231,7 @@ void RealDelete() {
 }
 
 int main() {
-//  UniquePtrExamples();
+//  UniquePtrExample();
 //  MakeUniqueExample();
 //  UniquePtrMoveExample();
 //  MoveExample1();
@@ -228,5 +241,5 @@ int main() {
 //  ConstMethodExample();
 //  ConstructorDestructorExample();
 //  RealNew();
-//  RealDelete();
+  RealDelete();
 }

@@ -24,7 +24,7 @@ struct C {
   }
 
   C& operator=(C&& other) {
-    std::cout << "C(" << idx << ") = move(C(" << other.idx << ")" << std::endl;
+    std::cout << "C(" << idx << ") = move(C(" << other.idx << "))" << std::endl;
     return *this;
   }
 
