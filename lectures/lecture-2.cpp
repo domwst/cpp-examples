@@ -143,7 +143,7 @@ void ConstructorDestructorExample() {
     Vector(const Vector& other) : Vector(*other.x_, *other.y_) {
     }
 
-    Vector(Vector&& other) : Vector() {  // MISTAKE HERE
+    Vector(Vector&& other) : Vector() {
       swap(x_, other.x_);
       swap(y_, other.y_);
     }
@@ -228,6 +228,16 @@ void RealDelete() {
   };
   auto a = new C();
   Delete(a);
+}
+
+void SharedPtrExample() {
+  shared_ptr<C> ptr1 = make_shared<C>();
+  auto ptr2 = ptr1;
+  print(ptr1.get(), ptr2.get());
+}
+
+void OptionalExample() {
+
 }
 
 int main() {
