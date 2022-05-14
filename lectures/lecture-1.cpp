@@ -1,6 +1,7 @@
 #include "../common/stopwatch.hpp"
 #include "../common/run_stress.hpp"
 #include "../common/print.hpp"
+#include "../common/random.hpp"
 
 #include <iostream>
 #include <vector>
@@ -12,15 +13,6 @@
 #include <sstream>
 
 using namespace std;
-
-size_t Rand() {
-  static mt19937_64 rnd(chrono::high_resolution_clock::now().time_since_epoch().count());
-  return rnd();
-}
-
-size_t Rand(size_t l, size_t r) {
-  return Rand() % (r - l) + l;
-}
 
 void PtrExample() {
   int a = 1, b = 2;

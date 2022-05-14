@@ -25,6 +25,11 @@ void print_single(std::ostream& out, const std::string& s) {
   out << "\"" << s << "\"";
 }
 
+template<class T>
+void print_single(std::ostream& out, T* ptr) {
+  out << ptr;
+}
+
 
 template<class T>
 void print_single(std::ostream& out, const std::vector<T>& v);
